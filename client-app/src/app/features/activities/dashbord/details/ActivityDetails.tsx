@@ -26,7 +26,7 @@ export default function ActivityDetails({activity, onClearSelectedActivity, onOp
                     <Button 
                       basic 
                       color='blue' 
-                      content='Edit'
+                      content='Edit'                      
                       onClick={()=>onOpenForm(activity.id)}/>
                     <Button 
                       basic 

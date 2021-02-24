@@ -14,19 +14,24 @@ interface Props {
     onOpenForm: (id: string) => void,
     onCloseForm: () => void
     createOrEditActivity: (acitvity: Activity) => void,
-    onDeleteActivity: (id: string) => void
+    onDeleteActivity: (id: string) => void,
+    submitting: boolean
 }
 
-export default function ActivityDashboard({ activities, selectedActivity, onAcitvitySelected, onClearSelectedActivity, editMode, onOpenForm, onCloseForm, createOrEditActivity, onDeleteActivity }: Props) {
+export default function ActivityDashboard({ activities, selectedActivity, onAcitvitySelected, onClearSelectedActivity, editMode, onOpenForm, onCloseForm, createOrEditActivity, onDeleteActivity, submitting }: Props) {
     return (
         <Grid>
             <Grid.Column width='10'>
-                <ActityList activities={activities} onAcitvitySelected={onAcitvitySelected} onDeleteActivity={onDeleteActivity} />
+                <ActityList activities={activities} onAcitvitySelected={onAcitvitySelected} onDeleteActivity={onDeleteActivity} submitting={submitting} />
             </Grid.Column>
             <Grid.Column width='6'>
                 {
                     editMode
-                        ? <ActivityForm selectedActivity={selectedActivity} onCloseForm={onCloseForm} createOrEditActivity={createOrEditActivity}/>
+                        ? <ActivityForm 
+                            selectedActivity={selectedActivity} 
+                            onCloseForm={onCloseForm} 
+                            createOrEditActivity={createOrEditActivity}
+                            submitting={submitting}/>
                         : selectedActivity && <ActivityDetails
                             activity={selectedActivity}
                             onClearSelectedActivity={onClearSelectedActivity}
