@@ -1,42 +1,27 @@
 import React from 'react';
-import { Grid, List } from 'semantic-ui-react';
-import { Activity } from '../../../models/activity';
+import { Grid } from 'semantic-ui-react';
+import { useStore } from '../../../stores/store';
 import ActityList from './ActivityLits';
 import ActivityDetails from './details/ActivityDetails';
 import ActivityForm from './form/ActivityForm';
+import { observer } from 'mobx-react-lite'
 
-interface Props {
-    activities: Activity[],
-    selectedActivity: Activity | undefined
-    onAcitvitySelected: (id: string) => void,
-    onClearSelectedActivity: () => void
-    editMode: boolean,
-    onOpenForm: (id: string) => void,
-    onCloseForm: () => void
-    createOrEditActivity: (acitvity: Activity) => void,
-    onDeleteActivity: (id: string) => void,
-    submitting: boolean
-}
+export default observer(function ActivityDashboard() {
 
-export default function ActivityDashboard({ activities, selectedActivity, onAcitvitySelected, onClearSelectedActivity, editMode, onOpenForm, onCloseForm, createOrEditActivity, onDeleteActivity, submitting }: Props) {
+    const { activityStore } = useStore()
+
     return (
         <Grid>
             <Grid.Column width='10'>
-                <ActityList activities={activities} onAcitvitySelected={onAcitvitySelected} onDeleteActivity={onDeleteActivity} submitting={submitting} />
+                <ActityList />
             </Grid.Column>
             <Grid.Column width='6'>
                 {
-                    editMode
-                        ? <ActivityForm 
-                            selectedActivity={selectedActivity} 
-                            onCloseForm={onCloseForm} 
-                            createOrEditActivity={createOrEditActivity}
-                            submitting={submitting}/>
-                        : selectedActivity && <ActivityDetails
-                            activity={selectedActivity}
-                            onClearSelectedActivity={onClearSelectedActivity}
-                            onOpenForm={onOpenForm} />}
+                    activityStore.edtitMode
+                        ? <ActivityForm />
+                        : activityStore.selectedActivity && <ActivityDetails />
+                }
             </Grid.Column>
         </Grid>
     )
-}
+})
