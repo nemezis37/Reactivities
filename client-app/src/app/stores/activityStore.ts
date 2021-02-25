@@ -14,6 +14,15 @@ export default class ActivityStore {
         makeAutoObservable(this)
     }
 
+    activitiesGroupedByDate = () => {
+        const dict = this.activitiesByDate().reduce((activities, activity) => {
+            const date = activity.date;
+            activities[date] = activities[date]? [...activities[date], activity]: [activity];
+            return activities;
+        }, {} as {[key: string]: Activity[]})
+        return Object.entries(dict);
+    }
+
     activitiesByDate = () => {
         return Array.from(this.activitiesRegestry.values()).sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
     }
