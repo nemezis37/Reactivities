@@ -1,27 +1,43 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
 import { useStore } from '../../../../stores/store';
 import { observer } from 'mobx-react-lite'
+import { useHistory, useParams } from 'react-router-dom';
+import { Activity } from '../../../../models/activity';
+import LoadingComponent from '../../../../layout/LoadingComponent';
+import { v4 as uuid } from 'uuid'
 
 export default observer( function ActivityForm() {
 
     const {activityStore} = useStore();
+    const history = useHistory();
+    const [activity, setActivity] = useState<Activity>({ venue: '', city: '', category: '', date: '', description: '', id: '', title: '' })
+    const {id} = useParams<{id: string}>()
 
-    var intialState = activityStore.selectedActivity ?? { venue: '', city: '', category: '', date: '', description: '', id: '', title: '' };
+    useEffect(() =>{
+        if(id){activityStore.loadActivity(id).then(act => setActivity(act!));}
+    }, [id, activityStore.loadActivity])
 
-    var [activity, setActivity] = useState(intialState);
-
-    function onSubmit() {
-        activity.id 
-        ? activityStore.updateActivity(activity)
-        : activityStore.createActivity(activity)
+    async function onSubmit() {
+        if(activity.id.length === 0)
+        {
+            activity.id = uuid();
+            await activityStore.createActivity(activity)
+            history.push(`/activity/${activity.id}`)
+        }
+        else
+        {
+            await activityStore.updateActivity(activity)
+            history.push(`/activity/${activity.id}`)
+        }
     }
 
     function onInput(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         var {name, value} = event.target;
         setActivity({...activity, [name]: value});
     }
-
+    if(activityStore.loadingInitial)
+        return <LoadingComponent content='Loading activity...'/>
     return (
         <Segment clearing>
             <Form onSubmit={onSubmit}>
@@ -39,8 +55,7 @@ export default observer( function ActivityForm() {
                 <Button
                     floated='right'
                     type='submit'
-                    content='Cancel'
-                    onClick={() => activityStore.closeForm()} />
+                    content='Cancel'/>
             </Form>
         </Segment>
     )
