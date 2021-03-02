@@ -56,11 +56,17 @@ namespace API.Controllers
         {
             var emailTaken = await _userManager.Users.AnyAsync(x => x.Email == registerDTO.Email);
             if (emailTaken)
-                return BadRequest("Email taken");
+            {
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
+            }
 
             var userNameTaken = await _userManager.Users.AnyAsync(x => x.UserName == registerDTO.UserName);
             if (userNameTaken)
-                return BadRequest("User name taken");
+            {
+                ModelState.AddModelError("userName", "User name taken");
+                return ValidationProblem();
+            }
 
             var user = new AppUser
             {
