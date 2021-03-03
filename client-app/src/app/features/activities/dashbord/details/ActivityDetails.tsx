@@ -18,9 +18,9 @@ export default observer(function ActivityDetails() {
     }, [id, activityStore.loadActivity])
 
 
-    const { selectedActivity: activity, loading } = activityStore;
+    const { selectedActivity: activity, loadingInitial } = activityStore;
 
-    if (!activity || loading)
+    if (!activity || loadingInitial)
         return <LoadingComponent />
     return (
         <Grid>
@@ -30,7 +30,7 @@ export default observer(function ActivityDetails() {
                 <ActivityDetailedChat/>
             </Grid.Column>
             <Grid.Column width={6}>
-                <ActivityDetailedSidebar/>
+                <ActivityDetailedSidebar activity={activity}/>
             </Grid.Column>
         </Grid>
     )

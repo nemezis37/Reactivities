@@ -3,7 +3,7 @@ import { Button, Segment } from 'semantic-ui-react'
 import { useStore } from '../../../../stores/store';
 import { observer } from 'mobx-react-lite'
 import { useHistory, useParams } from 'react-router-dom';
-import { Activity } from '../../../../models/activity';
+import { ActivityFormValues } from '../../../../models/activity';
 import LoadingComponent from '../../../../layout/LoadingComponent';
 import { v4 as uuid } from 'uuid'
 import { Formik, Form } from 'formik';
@@ -18,7 +18,7 @@ export default observer( function ActivityForm() {
 
     const {activityStore} = useStore();
     const history = useHistory();
-    const [activity, setActivity] = useState<Activity>({ venue: '', city: '', category: '', date: null, description: '', id: '', title: '' })
+    const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues())
     const {id} = useParams<{id: string}>()
 
     const validationSchema = Yup.object({
@@ -31,11 +31,11 @@ export default observer( function ActivityForm() {
     })
 
     useEffect(() =>{
-        if(id){activityStore.loadActivity(id).then(act => setActivity(act!));}
+        if(id){activityStore.loadActivity(id).then(act => setActivity(new ActivityFormValues(act)));}
     }, [id, activityStore.loadActivity])
 
-    async function onFormSubmit(activity: Activity) {
-        if(activity.id.length === 0)
+    async function onFormSubmit(activity: ActivityFormValues) {
+        if(!activity.id)
         {
             activity.id = uuid();
             await activityStore.createActivity(activity)
@@ -76,7 +76,7 @@ export default observer( function ActivityForm() {
                             positive
                             type='submit'
                             content='Submit' 
-                            loading={activityStore.loading}/>
+                            loading={isSubmitting}/>
                         <Button
                             floated='right'
                             type='submit'

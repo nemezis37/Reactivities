@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button, Icon, Item, Label, Segment } from 'semantic-ui-react'
 import { Activity } from '../../../models/activity'
 import {format} from 'date-fns'
+import ActivivtyListItemAttendee from './ActivivtyListItemAttendee'
 interface Props {
     act: Activity
 }
@@ -11,17 +12,26 @@ export default function ActivityListItem({ act }: Props) {
     return (
         <Segment.Group>
             <Segment>
+                {act.isCanceled && 
+                    <Label
+                        attached='top'
+                        color='red'
+                        content='Canceled'
+                        style={{textAlign: 'center'}}
+                    />}
                 <Item.Group>
                     <Item>
-                        <Item.Image size='tiny' circular src='assets/user.png' />
+                        <Item.Image stile={{marginBotom: 3}} size='tiny' circular src='assets/user.png' />
                     </Item>
                     <Item.Content>
                         <Item.Header as={Link} to={`/activity/${act.id}`}>
                             {act.title}
                         </Item.Header>
                         <Item.Description>
-                            Hosted by Bob
+                            Hosted by {act.host?.displayName}
                         </Item.Description>
+                        {act.isHost && (<Item.Description><Label basic color='orange' content='You are hosting this activity'/></Item.Description>)}
+                        {act.isGoing && !act.isHost && (<Item.Description><Label basic color='green' content='You are going to this activity'/></Item.Description>)}
                     </Item.Content>
                 </Item.Group>
             </Segment>
@@ -32,7 +42,7 @@ export default function ActivityListItem({ act }: Props) {
                 </span>
             </Segment>
             <Segment secondary>
-                Attendees go here
+                <ActivivtyListItemAttendee attendees={act.attendees!}/>
             </Segment>
             <Segment clearing>
                 <span>{act.description}</span>
