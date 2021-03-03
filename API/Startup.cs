@@ -7,7 +7,9 @@ using API.Extensions;
 using API.Middleware;
 using API.Services;
 using Application.Activities;
+using Application.Interfaces;
 using FluentValidation.AspNetCore;
+using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
@@ -36,6 +38,7 @@ namespace API
             services.AddApplicationServices(_config);
             services.AddIdentity(_config);
             services.AddScoped<TokenService>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
