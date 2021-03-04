@@ -44,7 +44,6 @@ export default class ActivityStore {
     }
 
     loadActivity = async (id: string) => {
-        
         let activity = this.activitiesRegestry.get(id)
         if(activity) {
             this.selectedActivity = activity;
@@ -53,13 +52,16 @@ export default class ActivityStore {
             this.setLoadingInitial(true);
             try {
                 activity = await agent.Activities.details(id);
-                this.selectedActivity = activity;
-                this.setActivity(activity);
-                this.setLoadingInitial(false);
+                this.setActivity(activity!);
+                runInAction(()=>{
+                    this.selectedActivity = activity;
+                })
                 return activity;
             } catch (error) {
                 console.log(error);
-                this.setLoadingInitial(false);
+            }
+            finally{
+                this.setLoadingInitial(false)
             }
         }
     }
@@ -164,6 +166,10 @@ export default class ActivityStore {
             }finally{
             runInAction(() => {this.loading = false;})
         }
+    }
+
+    clearSeectedActivity = () => {
+        this.selectedActivity = undefined;
     }
 
 }

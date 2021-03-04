@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using API.Extensions;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
 using FluentValidation.AspNetCore;
@@ -62,6 +63,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

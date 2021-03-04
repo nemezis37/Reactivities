@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Button, Header, Item, Segment, Image, Label } from 'semantic-ui-react'
 import { Activity } from '../../../../models/activity';
 import { format } from 'date-fns'
-import { act } from '@testing-library/react';
 import { useStore } from '../../../../stores/store';
 
 const activityImageStyle = {
