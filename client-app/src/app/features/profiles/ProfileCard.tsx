@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Card, Icon, Image } from 'semantic-ui-react'
-import { ActivityAttendee } from '../../models/ActivityAttendee'
+import { Profile } from '../../models/ActivityAttendee'
 
 interface Props {
-    profile: ActivityAttendee
+    profile: Profile
 }
 
 export default function ProfileCard({profile}: Props)

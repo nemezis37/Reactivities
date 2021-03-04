@@ -1,16 +1,23 @@
 import User from "./user";
 
-export interface ActivityAttendee {
+export interface Profile {
     userName: string,
     bio?: string,
     displayName: string,
     image?: string
+    photos? : Photo[]
 }
 
-export class ActivityAttendee implements ActivityAttendee {
+export class Profile implements Profile {
     constructor(user: User) {
         this.userName = user.userName;
         this.displayName = user.displayName;
         this.image = user.image;
     }
+}
+
+export interface Photo {
+    id: string,
+    url: string,
+    isMain: boolean
 }

@@ -54,4 +54,9 @@ export default class UserStore {
         window.localStorage.removeItem('jwt');
         history.push('/');
     }
+    
+    setImage = (image: string) => {
+        if(this.user)
+            this.user.image = image;
+    }
 }

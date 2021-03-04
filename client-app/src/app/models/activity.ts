@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react";
-import {ActivityAttendee} from "./ActivityAttendee";
+import {Profile} from "./ActivityAttendee";
 
 export interface Activity {
     id: string;
@@ -10,11 +10,11 @@ export interface Activity {
     city: string;
     venue: string;
     isCanceled: boolean;
-    attendees: ActivityAttendee[];
+    attendees: Profile[];
     hostUserName: string;
     isHost: boolean;
     isGoing: boolean;
-    host?: ActivityAttendee;
+    host?: Profile;
 }
 
 export class Activity implements Activity {

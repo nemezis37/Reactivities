@@ -3,7 +3,7 @@ import agent from "../api/agent";
 import { Activity, ActivityFormValues } from "../models/activity"
 import {format} from 'date-fns'
 import { store } from "./store";
-import { ActivityAttendee } from "../models/ActivityAttendee";
+import { Profile } from "../models/ActivityAttendee";
 
 export default class ActivityStore {
     activitiesRegestry: Map<string, Activity> = new Map<string, Activity>()
@@ -85,7 +85,7 @@ export default class ActivityStore {
             await agent.Activities.create(activityFormValues);
             const newActivity = new Activity(activityFormValues);
             const user = store.userStore.user;
-            const attendee = new ActivityAttendee(user!)
+            const attendee = new Profile(user!)
             newActivity.hostUserName = user!.userName;
             newActivity.attendees = [attendee];
             this.setActivity(newActivity);
@@ -122,7 +122,7 @@ export default class ActivityStore {
                     this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(x => x.userName !== user?.userName);
                     this.selectedActivity!.isGoing = false;}
                 else {
-                    const attendee = new ActivityAttendee(user!);
+                    const attendee = new Profile(user!);
                     this.selectedActivity?.attendees?.push(attendee);
                     this.selectedActivity!.isGoing = true;
                 }
