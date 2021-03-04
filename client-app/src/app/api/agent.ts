@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { history } from '../..';
 import { Activity, ActivityFormValues } from '../models/activity';
 import { Photo, Profile } from '../models/ActivityAttendee';
-import User, { UserFormValues } from '../models/user';
+import User, { ProfilesAboutFormValues, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
@@ -88,8 +88,8 @@ const Profiles = {
         return axios.post<Photo>('photos', formData, {headers:{'Content-type': 'multipart/form-data'}})
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
-    deletPhoto: (id: string) => requests.del(`/photos/${id}`)
-
+    deletPhoto: (id: string) => requests.del(`/photos/${id}`),
+    updateDetails:(data: ProfilesAboutFormValues) => requests.put(`/profiles`, data)
 }
 
 const agent = {

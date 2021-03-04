@@ -1,3 +1,5 @@
+import { Profile } from "./ActivityAttendee";
+
 export default interface User 
 {
     userName: string,
@@ -13,4 +15,21 @@ export interface UserFormValues
     password: string,
     displayName?: string,
     userName?: string
+}
+
+export interface ProfilesAboutFormValues {
+    displayName: string;
+    bio?: string
+}
+
+export class ProfilesAboutFormValues implements ProfilesAboutFormValues{
+
+    displayName: string = '';
+    bio? : string ='';
+    constructor(profile?: Profile){
+        if(!profile)
+            return;
+        this.bio = profile.bio || '';
+        this.displayName = profile.displayName;
+    }
 }
