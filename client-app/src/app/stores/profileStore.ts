@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Photo, Profile } from "../models/ActivityAttendee";
+import { Photo, Profile, UserActivity } from "../models/ActivityAttendee";
 import { ProfilesAboutFormValues } from "../models/user";
 import { store } from "./store";
 
@@ -12,6 +12,8 @@ export default class ProfileStore {
     followings: Profile[] = []
     loadingFollowings: boolean = false;
     activeTab = 0;
+    userActivities: UserActivity[] = [];
+    loadingActivities = false;
 
     constructor() {
         makeAutoObservable(this)
@@ -25,6 +27,21 @@ export default class ProfileStore {
             }
         })
     }
+
+    loadUserActivities = async (userName: string, predicate?: string) => {
+        this.loadingActivities = true;
+        try {
+            const acticvities = await agent.Profiles.listActivities(userName, predicate!);
+            runInAction(() => {
+                this.userActivities = acticvities;
+                this.loadingActivities = false;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => { this.loadingActivities = false; })
+        }
+    }
+
 
     setActiveTab = (activeTab: any) => {
         this.activeTab = activeTab;
@@ -129,13 +146,13 @@ export default class ProfileStore {
             store.activityStore.updateAttendeeFolowing(userName);
             runInAction(() => {
                 if (this.profile
-                     && this.profile.userName !== store.userStore.user?.userName
-                     && this.profile.userName === userName) {
+                    && this.profile.userName !== store.userStore.user?.userName
+                    && this.profile.userName === userName) {
                     following ? this.profile.followersCount++ : this.profile.followersCount--
                     this.profile.following = !this.profile.following;
                 }
-                if(this.profile && this.profile.userName === store.userStore.user?.userName){
-                    following? this.profile.followingCount++ : this.profile.followingCount--;
+                if (this.profile && this.profile.userName === store.userStore.user?.userName) {
+                    following ? this.profile.followingCount++ : this.profile.followingCount--;
                 }
                 this.followings.forEach(f => {
                     if (f.userName === userName) {

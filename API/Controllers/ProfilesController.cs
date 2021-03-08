@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using API.DTO;
 using Application.Profiles;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -22,6 +23,13 @@ namespace API.Controllers
                 DisplayName = detailsDTO.DisplayName
             };
             return HandleResult(await Mediator.Send(editCommand));
+        }
+
+        [HttpGet("{userName}/activities")]
+        public async Task<IActionResult> GetUserActivities(string userName, string predicate)
+        {
+            return HandleResult(
+                await Mediator.Send(new ListActivities.Query {UserName = userName, Predicate = predicate}));
         }
     }
 }

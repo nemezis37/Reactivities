@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -13,9 +14,13 @@ namespace Application.Activities
 {
     public class List
     {
-        public class Query : IRequest<Result<List<ActivityDto>>>{}
+        public class Query : IRequest<Result<PagedList<ActivityDto>>>
+        {
+            public ActivityParams Params { get; set; }
 
-        public class Handler : IRequestHandler<Query, Result<List<ActivityDto>>>
+        }
+
+        public class Handler : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -28,14 +33,22 @@ namespace Application.Activities
                 _userAccessor = userAccessor;
             }
 
-            public async Task<Result<List<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<PagedList<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activitiesDto = await _context
+                var activitiesDto = _context
                     .Activities
+                    .Where(x => x.Date >= request.Params.StartDate)
+                    .OrderBy(x => x.Date)
                     .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, new {currentUserName = _userAccessor.GetUserName()})
-                    .ToListAsync(cancellationToken: cancellationToken);
+                    .AsQueryable();
 
-                return Result<List<ActivityDto>>.Success(activitiesDto);
+                if (request.Params.IsGoing && !request.Params.IsHost)
+                    activitiesDto =
+                        activitiesDto.Where(x => x.Attendees.Any(a => a.UserName == _userAccessor.GetUserName()));
+                if (request.Params.IsHost && !request.Params.IsGoing)
+                    activitiesDto = activitiesDto.Where(x => x.HostUserName == _userAccessor.GetUserName());
+                var pagedList = await PagedList<ActivityDto>.CreateAsync(activitiesDto, request.Params.PageNumber, request.Params.PageSize);
+                return Result<PagedList<ActivityDto>>.Success(pagedList);
             }
         }
     }
